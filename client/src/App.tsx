@@ -6,6 +6,8 @@ import { Colors } from './models/Colors';
 import { Player } from './models/Player';
 import LostFigures from './components/LostFigures';
 import Timer from './components/Timer';
+import Button from "./components/Button/Button.tsx";
+import {Menu} from "./components/Menu/Menu.tsx";
 
 const App = () => {
     const [whitePlayer, setWhitePlayer] = useState(new Player(Colors.WHITE));
@@ -33,6 +35,7 @@ const App = () => {
 
     return (
         <div className={'app'}>
+            <Menu/>
             <Timer currentPlayer={currentPlayer} restart={restart} />
             <BoardComponent
                 board={board}
