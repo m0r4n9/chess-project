@@ -43,8 +43,7 @@
 
 .PixellButton:active{
     background-color: #606060;
-    transform: translateY(3px);
-    width: 148px;
+    transform: translateY(3px) scaleX(0.96);
     border-right: 4px solid black;
     border-bottom: 5px solid black;
 }
