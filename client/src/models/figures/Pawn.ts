@@ -33,6 +33,7 @@ export class Pawn extends Figure{
     }
 
     moveFigure(target: Cell) {
+        console.log(target);
         super.moveFigure(target);
         this.isFirstStep = false;
     }
