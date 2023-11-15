@@ -2,8 +2,19 @@
 
 }
 
+/*@font-face {*/
+/*    font-family: 'Pixeboy-z8XGD';*/
+/*    src: url('fonts/Pixelify_Sans/PixelifySans-VariableFont_wght.ttf');*/
+/*}*/
+
+/*@font-face {*/
+/*    font-family: 'Pixel-Bold';*/
+/*    src: url('fonts/Pixelify_Sans/static/PixelifySans-SemiBold.ttf');*/
+/*}*/
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Pixeboy-z8XGD', serif;
 }

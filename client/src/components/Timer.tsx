@@ -33,14 +33,19 @@ const Timer:FC<timerProps> = ({currentPlayer, restart}) => {
         restart()
     }
     return (
-        <div>
-            <div>
-                <button onClick={handleRestart}>
-                    Restart Game
+        <div style={{marginRight:'25px'}}>
+            <div style={{display: 'flex', justifyContent:'center'}}>
+                <button onClick={handleRestart} className={'restartButton'}>
+                    <span>Restart Game</span>
+                    <svg viewBox="-5 -5 110 110" preserveAspectRatio="none" aria-hidden="true">
+                        <path d="M0,0 C0,0 100,0 100,0 C100,0 100,100 100,100 C100,100 0,100 0,100 C0,100 0,0 0,0"/>
+                    </svg>
                 </button>
             </div>
-            <h2>Black - {blackTime}</h2>
-            <h2>White - {whiteTime}</h2>
+            <div>
+                <h2>Black - {blackTime}</h2>
+                <h2>White - {whiteTime}</h2>
+            </div>
         </div>
     );
 };

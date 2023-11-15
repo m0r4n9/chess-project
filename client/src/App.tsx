@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import BoardComponent from './components/BoardComponent';
-import { Board } from './models/Board';
-import { Colors } from './models/Colors';
-import { Player } from './models/Player';
+import {Board} from './models/Board';
+import {Colors} from './models/Colors';
+import {Player} from './models/Player';
 import LostFigures from './components/LostFigures';
 import Timer from './components/Timer';
-import Button from "./components/Button/Button.tsx";
 import {Menu} from "./components/Menu/Menu.tsx";
+import {CurrentPlayer} from "./components/CurrentPlayer/CurrentPlayer.tsx";
 
 const App = () => {
     const [whitePlayer, setWhitePlayer] = useState(new Player(Colors.WHITE));
@@ -36,22 +36,21 @@ const App = () => {
     return (
         <div className={'app'}>
             <Menu/>
-            <Timer currentPlayer={currentPlayer} restart={restart} />
-            <BoardComponent
-                board={board}
-                setBoard={setBoard}
-                currentPlayer={currentPlayer}
-                swapPlayer={swapPlayer}
-            />
             <div>
-                <LostFigures
-                    title={'Black figures'}
-                    figures={board.lostBlackFigures}
-                />
-                <LostFigures
-                    title={'White figures'}
-                    figures={board.lostWhiteFigures}
-                />
+                <CurrentPlayer currentPlayer={currentPlayer}/>
+                <div className={'timerBoard'}>
+                    <Timer currentPlayer={currentPlayer} restart={restart}/>
+                    <BoardComponent
+                        board={board}
+                        setBoard={setBoard}
+                        currentPlayer={currentPlayer}
+                        swapPlayer={swapPlayer}
+                    />
+                </div>
+            </div>
+            <div>
+                <LostFigures title={"Black figures"} figures={board.lostBlackFigures}/>
+                <LostFigures title={"White figures"} figures={board.lostWhiteFigures}/>
             </div>
         </div>
     );
