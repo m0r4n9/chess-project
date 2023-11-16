@@ -3,10 +3,6 @@ import {AppController} from './app.controller';
 import {AppService} from './app.service';
 import {SocketGateway} from './socket/socket.gateway';
 import {SequelizeModule} from "@nestjs/sequelize";
-import {ChessModule} from './chess/chess.module';
-import {BoardModule} from './board/board.module';
-import {ChessPiece} from "./chess/chess.model";
-import {Board} from "./board/board.model";
 
 @Module({
     imports: [
@@ -17,7 +13,7 @@ import {Board} from "./board/board.model";
             username: 'postgres',
             password: 'tulege91',
             database: 'chess',
-            models: [ChessPiece, Board],
+            models: [],
             autoLoadModels: true,
             synchronize: true,
             // sync: {
@@ -27,8 +23,6 @@ import {Board} from "./board/board.model";
                 timestamps: false
             }
         }),
-        ChessModule,
-        BoardModule
     ],
     controllers: [AppController],
     providers: [AppService, SocketGateway],
