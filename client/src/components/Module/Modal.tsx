@@ -15,6 +15,11 @@ export const Modal = memo((props: ModuleProps) => {
         e.stopPropagation()
     }
 
+    // let styles = cls.Modal
+    // if(isOpen){
+    //     styles = [cls.Modal, cls.opened].join(' ')
+    // }
+
     return (
         <div className={classNames(cls.Modal, {[cls.opened]: isOpen})}>
             <div className={cls.overlay} onClick={closeHandler}>
