@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Chess } from 'chess.js';
-import SocketApi from './api/socket-api.ts';
 import {
     Box,
     Card,
@@ -13,7 +12,8 @@ import {
     Typography,
 } from '@mui/material';
 import { Chessboard } from 'react-chessboard';
-import { Modal } from './components/Modal/Modal.tsx';
+import SocketApi from '../../api/socket-api.ts';
+import { Modal } from '../../components/Modal/Modal.tsx';
 
 interface GameProps {
     players: any;
@@ -116,7 +116,6 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
         });
     }, [room, cleanup]);
 
-
     return (
         <Stack>
             <Card>
@@ -153,7 +152,7 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
                     </Box>
                 )}
             </Stack>
-            <Modal // Game Over CustomDialog
+            <Modal
                 open={Boolean(over)}
                 title={over}
                 contentText={over}

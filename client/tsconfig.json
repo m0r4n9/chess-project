@@ -5,8 +5,10 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "esModuleInterop": true,
 
     /* Bundler mode */
+    "allowSyntheticDefaultImports": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
@@ -17,8 +19,13 @@
     /* Linting */
     "strict": true,
 //    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+//    "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

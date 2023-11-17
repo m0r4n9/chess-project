@@ -1,8 +1,8 @@
 import { Button, Stack, TextField } from '@mui/material';
 import { useState } from 'react';
-import SocketApi from './api/socket-api.ts';
-import { Modal } from './components/Modal/Modal.tsx';
-import { useConnectSocket } from './hooks/useConnectSocket/useConnectSocket.ts';
+import { Modal } from "../../components/Modal/Modal.tsx";
+import SocketApi from "../../api/socket-api.ts";
+import { useConnectSocket } from "../../hooks/useConnectSocket/useConnectSocket.ts";
 
 interface InitGameProps {
     setRoom: any;
