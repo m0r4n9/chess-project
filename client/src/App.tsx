@@ -1,8 +1,8 @@
-import { AppRouter } from './routes/AppRouter.tsx';
+import { AppRouter } from './providers/routes/AppRouter.tsx';
 
 const App = () => {
     return (
-        <div>
+        <div className="app">
             <AppRouter />
         </div>
     );

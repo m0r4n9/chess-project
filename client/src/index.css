@@ -12,11 +12,15 @@
 
 @font-face {
     font-family: 'Pixeboy-z8XGD';
-    src: url('/assets/fonts/Pixeboy.ttf');
+    src: url("assets/fonts/Pixeboy.ttf");
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+.app {
+    background-color: #182f75;
 }

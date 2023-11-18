@@ -165,8 +165,9 @@ const OfflineGame = () => {
                 <div className={cls.header}>
 
                     <div className={cls.level}>
-                        {Object.entries(levels).map(([level, depth]) => (
+                        {Object.entries(levels).map(([level, depth], index) => (
                             <button
+                                key={index}
                                 className={cls.btn}
                                 style={{
                                     backgroundColor:

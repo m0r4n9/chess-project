@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import cls from './StartMenu.module.scss';
 import { useEffect, useState } from 'react';
 import { useMenuAnimation } from './useMenuAnimation.ts';
+import { BurgerMenu } from './BurgerMenu/BurgerMenu.tsx';
+import { ReactComponent as BurgerIcon } from '@/assets/icons/burger.svg';
 
 export const StartMenu = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -10,13 +12,13 @@ export const StartMenu = () => {
     useEffect(() => {
         const timeId = setTimeout(() => {
             setIsOpen(true);
-        }, 1200);
-
+        }, 1000);
         return () => clearTimeout(timeId);
     }, []);
 
     return (
-        <div className={cls.Menu} ref={scope}>
+        <div className={cls.Menu}>
+            <BurgerMenu trigger={<BurgerIcon />} />
             <div className={cls.content}>
                 <motion.div
                     initial={{ opacity: 0, scale: 0 }}
@@ -24,7 +26,8 @@ export const StartMenu = () => {
                         opacity: 1,
                         scale: 1,
                         transition: {
-                            duration: 1.2,
+                            duration: 1,
+                            delay: 0.5,
                         },
                     }}
                     className={cls.header}
@@ -33,6 +36,7 @@ export const StartMenu = () => {
                 </motion.div>
 
                 <motion.div
+                    ref={scope}
                     initial={{
                         opacity: 0,
                     }}
