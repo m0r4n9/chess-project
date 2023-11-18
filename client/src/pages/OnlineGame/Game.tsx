@@ -27,8 +27,6 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
     const [fen, setFen] = useState(chess.fen());
     const [over, setOver] = useState('');
 
-    console.log(orientation);
-
     const makeAMove = useCallback(
         (move: any) => {
             try {

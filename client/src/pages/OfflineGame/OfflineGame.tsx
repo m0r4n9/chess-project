@@ -1,77 +1,46 @@
 import { useMemo, useState } from 'react';
+import cls from './OfflineGame.module.scss';
 import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
 import Engine from './Engine/Engine.ts';
-
-const buttonStyle = {
-    cursor: 'pointer',
-    padding: '10px 20px',
-    margin: '10px 10px 0px 0px',
-    borderRadius: '6px',
-    backgroundColor: '#f0d9b5',
-    border: 'none',
-    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.5)',
-};
-
-const boardWrapper = {
-    width: `70vw`,
-    maxWidth: '70vh',
-    margin: '3rem auto',
-};
+import { Square } from 'react-chessboard/dist/chessboard/types';
+import { Move } from '../../interfaces/ChessTypes/chess.ts';
 
 const OfflineGame = () => {
     const levels = {
-        'Easy 🤓': 2,
-        'Medium 🧐': 8,
-        'Hard 😵': 18,
+        'Легкий': 2,
+        'Средний': 8,
     };
     const engine = useMemo(() => new Engine(), []);
     const [game, setGame] = useState(new Chess());
-
+    //
     const [gamePosition, setGamePosition] = useState(game.fen());
     const [stockfishLevel, setStockfishLevel] = useState(2);
+    const [moveFrom, setMoveFrom] = useState('');
+    // Куда пошла фигура и сброс после хода до null
+    const [moveTo, setMoveTo] = useState<Square | null>(null);
+    const [showPromotionDialog, setShowPromotionDialog] = useState(false);
+    const [rightClickedSquares, setRightClickedSquares] = useState({});
+    const [moveSquares, setMoveSquares] = useState({});
+    const [optionSquares, setOptionSquares] = useState({});
+    const [motion, setMotion] = useState(true);
 
-    const pieces = [
-        'wP',
-        'wN',
-        'wB',
-        'wR',
-        'wQ',
-        'wK',
-        'bP',
-        'bN',
-        'bB',
-        'bR',
-        'bQ',
-        'bK',
-    ];
+    function safeGameMutate(modify: (game: any) => void) {
+        setGame((g: typeof game) => {
+            const update = { ...g };
+            modify(update);
+            modify(update);
+            return update;
+        });
+    }
 
-    // const customPieces = useMemo(() => {
-    //     const pieceComponents: any = {};
-    //     pieces.forEach((piece) => {
-    //         pieceComponents[piece] = ({
-    //             squareWidth,
-    //         }: {
-    //             squareWidth: any;
-    //         }) => {
-    //
-    //           return (
-    //             <div
-    //               style={{
-    //                 width: `${squareWidth}px`,
-    //                 height: squareWidth,
-    //                 backgroundImage: `url("./assets/black/bP.png")`,
-    //                 backgroundSize: '100%',
-    //               }}
-    //             />
-    //           );
-    //         }
-    //     });
-    //     return pieceComponents;
-    // }, [pieces]);
+    // История ходов
+    // .isDraw() - ничья
+    // useEffect(() => {
+    //     console.log(game.history());
+    // }, [game.history()]);
 
-
-
+    // Ход компьютера
     function findBestMove() {
         engine.evaluatePosition(game.fen(), stockfishLevel);
 
@@ -84,88 +53,183 @@ const OfflineGame = () => {
                 });
 
                 setGamePosition(game.fen());
+                setMotion((prevState) => !prevState);
             }
         });
     }
 
-    function onDrop(sourceSquare: any, targetSquare: any, piece: any) {
-        const move = game.move({
-            from: sourceSquare,
-            to: targetSquare,
-            promotion: piece[1].toLowerCase() ?? 'q',
+    function getMoveOptions(square: Square) {
+        const moves = game.moves({
+            square,
+            verbose: true,
         });
-        setGamePosition(game.fen());
+        if (moves.length === 0) {
+            setOptionSquares({});
+            return false;
+        }
 
-        // illegal move
-        if (move === null) return false;
-
-        // exit if the game is over
-        if (game.game_over() || game.in_draw()) return false;
-
-        findBestMove();
-
+        const newSquares: any = {};
+        moves.map((move: Move) => {
+            newSquares[move.to] = {
+                background:
+                    game.get(move.to) &&
+                    game.get(move.to).color !== game.get(square).color
+                        ? 'radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)'
+                        : 'radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)',
+                borderRadius: '50%',
+            };
+            return move;
+        });
+        newSquares[square] = {
+            background: 'rgba(255, 255, 0, 0.4)',
+        };
+        setOptionSquares(newSquares);
         return true;
     }
 
+    function onSquareClick(square: Square) {
+        if (game.game_over() || game.in_checkmate()) {
+            window.alert('Game End!');
+            game.reset();
+        }
+        setRightClickedSquares({});
+
+        // Откуда пошла фигура
+        if (!moveFrom) {
+            const hasMoveOptions = getMoveOptions(square);
+            if (hasMoveOptions) setMoveFrom(square);
+            return;
+        }
+
+        // Куда пойдет фигура
+        if (!moveTo) {
+            const moves: Move[] = game.moves({
+                moveFrom,
+                verbose: true,
+            });
+            const foundMove = moves.find(
+                (m) => m.from === moveFrom && m.to === square,
+            );
+
+            if (!foundMove) {
+                // check if clicked on new piece
+                const hasMoveOptions = getMoveOptions(square);
+                // if new piece, setMoveFrom, otherwise clear moveFrom
+                setMoveFrom(hasMoveOptions ? square : '');
+                return;
+            }
+
+            setMoveTo(square);
+
+            // if promotion move
+            if (
+                (foundMove.color === 'w' &&
+                    foundMove.piece === 'p' &&
+                    square[1] === '8') ||
+                (foundMove.color === 'b' &&
+                    foundMove.piece === 'p' &&
+                    square[1] === '1')
+            ) {
+                setShowPromotionDialog(true);
+                return;
+            }
+
+            // is normal move
+            const gameCopy = { ...game };
+            const move = gameCopy.move({
+                from: moveFrom,
+                to: square,
+                promotion: 'q',
+            });
+
+            // if invalid, setMoveFrom and getMoveOptions
+            if (move === null) {
+                const hasMoveOptions = getMoveOptions(square);
+                if (hasMoveOptions) setMoveFrom(square);
+                return;
+            }
+
+            setGame(gameCopy);
+            setMotion((prevState) => !prevState);
+            setTimeout(findBestMove, 400);
+            setMoveFrom('');
+            setMoveTo(null);
+            setOptionSquares({});
+            return;
+        }
+    }
+
     return (
-        <div style={boardWrapper}>
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    marginBottom: '1rem',
-                }}
-            >
-                {Object.entries(levels).map(([level, depth]) => (
+        <div className={cls.page}>
+            <div className={cls.container}>
+                <div className={cls.header}>
+
+                    <div className={cls.level}>
+                        {Object.entries(levels).map(([level, depth]) => (
+                            <button
+                                className={cls.btn}
+                                style={{
+                                    backgroundColor:
+                                        depth === stockfishLevel
+                                            ? '#626262'
+                                            : '#f0d9b5',
+                                }}
+                                onClick={() => setStockfishLevel(depth)}
+                            >
+                                {level}
+                            </button>
+                        ))}
+                    </div>
+                    <h1>Ход: {motion ? 'Белых' : 'Черных'}</h1>
+                </div>
+                <Chessboard
+                    id="ClickToMove"
+                    animationDuration={200}
+                    arePiecesDraggable={false}
+                    position={game.fen()}
+                    onSquareClick={onSquareClick}
+                    customBoardStyle={{
+                        borderRadius: '4px',
+                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
+                    }}
+                    customSquareStyles={{
+                        ...moveSquares,
+                        ...optionSquares,
+                        ...rightClickedSquares,
+                    }}
+                    promotionToSquare={moveTo}
+                    showPromotionDialog={showPromotionDialog}
+                />
+                <div className={cls.wrapperActions}>
                     <button
-                        style={{
-                            ...buttonStyle,
-                            backgroundColor:
-                                depth === stockfishLevel
-                                    ? '#B58863'
-                                    : '#f0d9b5',
+                        className={cls.btn}
+                        onClick={() => {
+                            safeGameMutate((game) => {
+                                game.reset();
+                                setMotion(true);
+                            });
+                            setMoveSquares({});
+                            setOptionSquares({});
+                            setRightClickedSquares({});
                         }}
-                        onClick={() => setStockfishLevel(depth)}
                     >
-                        {level}
+                        Начать заново
                     </button>
-                ))}
+                    <button
+                        className={cls.btn}
+                        onClick={() => {
+                            safeGameMutate((game) => {
+                                game.undo();
+                            });
+                            setMoveSquares({});
+                            setOptionSquares({});
+                            setRightClickedSquares({});
+                        }}
+                    >
+                        Отменить
+                    </button>
+                </div>
             </div>
-
-            <Chessboard
-                id="PlayVsStockfish"
-                customDarkSquareStyle={{ backgroundColor: '#b25ae0' }}
-                customLightSquareStyle={{
-                    backgroundColor: 'rgba(192,16,16,0.48)',
-                }}
-                customBoardStyle={{
-                    borderRadius: '4px',
-                    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
-                }}
-                // customPieces={customPieces}
-                position={gamePosition}
-                onPieceDrop={onDrop}
-            />
-
-            <button
-                style={buttonStyle}
-                onClick={() => {
-                    game.reset();
-                    setGamePosition(game.fen());
-                }}
-            >
-                New game
-            </button>
-            <button
-                style={buttonStyle}
-                onClick={() => {
-                    game.undo();
-                    game.undo();
-                    setGamePosition(game.fen());
-                }}
-            >
-                Undo
-            </button>
         </div>
     );
 };

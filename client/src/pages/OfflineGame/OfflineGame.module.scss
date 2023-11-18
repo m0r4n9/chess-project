@@ -1,3 +1,42 @@
-.OfflineGame {
+.page {
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    background-color: #182f75;
+}
 
+.container {
+    width: 70vw;
+    max-width: 70vh;
+    margin: 3rem auto;
+}
+
+.header {
+    color: white;
+    margin-bottom: 20px;
+
+    .level {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 20px;
+    }
+
+    .btn {
+        @include pixelButton;
+        background-color: red;
+    }
+}
+
+
+.wrapperActions {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+
+    .btn {
+        @include pixelButton;
+        background-color: red;
+        padding: 10px 0;
+    }
 }
