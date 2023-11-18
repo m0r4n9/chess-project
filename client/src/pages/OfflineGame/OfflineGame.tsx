@@ -1,8 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
-import Engine from "./Engine/Engine.ts";
-
+import Engine from './Engine/Engine.ts';
 
 const buttonStyle = {
     cursor: 'pointer',
@@ -32,12 +31,57 @@ const OfflineGame = () => {
     const [gamePosition, setGamePosition] = useState(game.fen());
     const [stockfishLevel, setStockfishLevel] = useState(2);
 
+    const pieces = [
+        'wP',
+        'wN',
+        'wB',
+        'wR',
+        'wQ',
+        'wK',
+        'bP',
+        'bN',
+        'bB',
+        'bR',
+        'bQ',
+        'bK',
+    ];
+
+    // const customPieces = useMemo(() => {
+    //     const pieceComponents: any = {};
+    //     pieces.forEach((piece) => {
+    //         pieceComponents[piece] = ({
+    //             squareWidth,
+    //         }: {
+    //             squareWidth: any;
+    //         }) => {
+    //
+    //           return (
+    //             <div
+    //               style={{
+    //                 width: `${squareWidth}px`,
+    //                 height: squareWidth,
+    //                 backgroundImage: `url("./assets/black/bP.png")`,
+    //                 backgroundSize: '100%',
+    //               }}
+    //             />
+    //           );
+    //         }
+    //     });
+    //     return pieceComponents;
+    // }, [pieces]);
+
+
+
     function findBestMove() {
         engine.evaluatePosition(game.fen(), stockfishLevel);
 
         engine.onMessage(({ bestMove }) => {
             if (bestMove) {
-                game.move(bestMove);
+                game.move({
+                    from: bestMove.substring(0, 2),
+                    to: bestMove.substring(2, 4),
+                    promotion: bestMove.substring(4, 5),
+                });
 
                 setGamePosition(game.fen());
             }
@@ -56,7 +100,7 @@ const OfflineGame = () => {
         if (move === null) return false;
 
         // exit if the game is over
-        if (game.isGameOver() || game.isDraw()) return false;
+        if (game.game_over() || game.in_draw()) return false;
 
         findBestMove();
 
@@ -90,6 +134,15 @@ const OfflineGame = () => {
 
             <Chessboard
                 id="PlayVsStockfish"
+                customDarkSquareStyle={{ backgroundColor: '#b25ae0' }}
+                customLightSquareStyle={{
+                    backgroundColor: 'rgba(192,16,16,0.48)',
+                }}
+                customBoardStyle={{
+                    borderRadius: '4px',
+                    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
+                }}
+                // customPieces={customPieces}
                 position={gamePosition}
                 onPieceDrop={onDrop}
             />

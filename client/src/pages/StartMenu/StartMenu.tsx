@@ -1,17 +1,26 @@
 import cls from './StartMenu.module.scss';
-import Button from '../../components/Button/Button.tsx';
 
 export const StartMenu = () => {
     return (
         <div className={cls.Menu}>
-            <div className={cls.overlay}>
-                <div className={cls.content}>
-                    <a href="/single" style={{ color: 'white' }}>
-                        Play Offline
-                    </a>
-                    <a href="/online">Play Online</a>
-                    <Button margin={'100px 0 25px'}>Change language</Button>
+            <div className={cls.content}>
+                <div className={cls.header}>
+                    <h1>Game Chess</h1>
                 </div>
+
+                <a
+                    href="/single"
+                    className={cls.pixel}
+                    style={{ color: 'white' }}
+                >
+                    Play Offline
+                </a>
+                <a href="/online" className={cls.pixel}>
+                    Play Online
+                </a>
+                <a href="#" className={cls.pixel}>
+                    Change language
+                </a>
             </div>
         </div>
     );

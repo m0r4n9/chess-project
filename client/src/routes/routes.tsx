@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { StartMenu } from '../pages/StartMenu/StartMenu.tsx';
 import { OfflineGameAsync } from '../pages/OfflineGame/OfflineGame.async.tsx';
 import { OnlineGame } from "../pages/OnlineGame/OnlineGame.tsx";
+import Demo from "../pages/OfflineGame/OfflineGame.tsx";
 
 interface RoutesProps {
     path: string;
@@ -15,7 +16,7 @@ export const listRoutes: RoutesProps[] = [
     },
     {
         path: '/single',
-        element: <OfflineGameAsync />,
+        element: <Demo />,
     },
     {
         path: '/online',

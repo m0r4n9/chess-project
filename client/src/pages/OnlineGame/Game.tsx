@@ -27,6 +27,8 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
     const [fen, setFen] = useState(chess.fen());
     const [over, setOver] = useState('');
 
+    console.log(orientation);
+
     const makeAMove = useCallback(
         (move: any) => {
             try {
@@ -35,13 +37,13 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
 
                 console.log(
                     'over, checkmate',
-                    chess.isGameOver(),
-                    chess.isCheckmate(),
+                    chess.game_over(),
+                    chess.in_checkmate(),
                 );
 
-                if (chess.isGameOver()) {
+                if (chess.game_over()) {
                     // check if move led to "game over"
-                    if (chess.isCheckmate()) {
+                    if (chess.in_checkmate()) {
                         // if reason for game over is a checkmate
                         // Set message to checkmate.
                         setOver(
@@ -50,7 +52,7 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
                             } wins!`,
                         );
                         // The winner is determined by checking for which side made the last move
-                    } else if (chess.isDraw()) {
+                    } else if (chess.in_draw()) {
                         // if it is a draw
                         setOver('Draw'); // set message to "Draw"
                     } else {
@@ -58,7 +60,6 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
                     }
                 }
 
-                console.log(result);
                 return result;
             } catch (e) {
                 console.log('dont!!!');
@@ -135,6 +136,10 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
                     <Chessboard
                         position={fen}
                         onPieceDrop={onDrop}
+
+                        isDraggablePiece={({ piece }) => {
+                            return piece[0] === orientation[0];
+                        }}
                         boardOrientation={orientation}
                         animationDuration={500}
                     />

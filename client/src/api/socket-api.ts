@@ -4,7 +4,7 @@ class SocketApi {
     static socket: null | Socket = null;
 
     static createConnection(): void {
-        this.socket = io("http://localhost:8080");
+        this.socket = io("http://192.168.1.152:8080");
 
         this.socket.on("connect", () => {
             console.log('connected client');

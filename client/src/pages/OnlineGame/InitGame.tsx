@@ -19,12 +19,6 @@ export default function InitGame({
     const [roomInput, setRoomInput] = useState(''); // input state
     const [roomError, setRoomError] = useState('');
 
-    useConnectSocket({
-        setRoom,
-        setOrientation,
-        setPlayers,
-        setRoomDialogOpen,
-    });
 
     return (
         <Stack
