@@ -53,7 +53,6 @@ const OfflineGame = () => {
                 });
 
                 setGamePosition(game.fen());
-                setMotion((prevState) => !prevState);
             }
         });
     }
@@ -152,6 +151,7 @@ const OfflineGame = () => {
             setGame(gameCopy);
             setMotion((prevState) => !prevState);
             setTimeout(findBestMove, 400);
+            setMotion((prevState) => !prevState);
             setMoveFrom('');
             setMoveTo(null);
             setOptionSquares({});

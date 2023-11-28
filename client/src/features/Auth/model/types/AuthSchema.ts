@@ -1,7 +1,12 @@
+import { User } from '@/entities/User';
+
+export interface ResponseAuth {
+    user: User;
+    jwtToken: string;
+}
 
 export interface AuthSchema {
     isLoading: boolean;
-    login: string;
-    password: string;
+    user?: User;
     error?: string;
 }

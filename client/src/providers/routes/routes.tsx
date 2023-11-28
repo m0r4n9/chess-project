@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { StartMenu } from '@/pages/StartMenu/StartMenu.tsx';
+import { StartMenu } from '@/pages/StartMenu';
 import OfflineGame from '@/pages/OfflineGame/OfflineGame.tsx';
 import { OnlineGame } from '@/pages/OnlineGame/OnlineGame.tsx';
 

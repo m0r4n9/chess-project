@@ -5,6 +5,7 @@ interface UserCreationAttrs {
     password: string;
 }
 
+
 @Table({tableName: 'Users'})
 export class User extends Model<User, UserCreationAttrs> {
     @Column({unique: true, allowNull: false})

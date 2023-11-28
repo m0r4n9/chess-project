@@ -8,11 +8,4 @@ export default defineConfig({
     resolve: {
         alias: [{ find: '@', replacement: '/src' }],
     },
-    css: {
-        preprocessorOptions: {
-            scss: {
-                additionalData: '@import "./src/mixins/mixins.scss";',
-            },
-        },
-    },
 });

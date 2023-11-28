@@ -1,30 +1,26 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import cls from './Game.module.scss';
 import { Chess } from 'chess.js';
-import {
-    Box,
-    Card,
-    CardContent,
-    List,
-    ListItem,
-    ListItemText,
-    ListSubheader,
-    Stack,
-    Typography,
-} from '@mui/material';
 import { Chessboard } from 'react-chessboard';
 import SocketApi from '../../api/socket-api.ts';
-import { Modal } from '../../components/Modal/Modal.tsx';
 import { Square } from 'react-chessboard/dist/chessboard/types';
 import { Move } from '../../interfaces/ChessTypes/chess.ts';
 
 interface GameProps {
-    players: any;
+    players: any[];
+    userId?: string;
     room: any;
     orientation: any;
-    cleanup: any;
+    cleanup?: any;
 }
 
-export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
+export const Game = ({
+    players,
+    room,
+    orientation,
+    userId,
+    cleanup,
+}: GameProps) => {
     const chess = useMemo(() => new Chess(), []);
     const [fen, setFen] = useState(chess.fen());
     const [over, setOver] = useState('');
@@ -34,12 +30,11 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
     const [moveTo, setMoveTo] = useState<Square | null>(null);
     const [moveFrom, setMoveFrom] = useState('');
 
-
     const makeAMove = useCallback(
         (move: any) => {
             try {
-                const result = chess.move(move); // update Chess instance
-                setFen(chess.fen()); // update fen state to trigger a re-render
+                const result = chess.move(move);
+                setFen(chess.fen());
 
                 console.log(
                     'over, checkmate',
@@ -48,19 +43,14 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
                 );
 
                 if (chess.game_over()) {
-                    // check if move led to "game over"
                     if (chess.in_checkmate()) {
-                        // if reason for game over is a checkmate
-                        // Set message to checkmate.
                         setOver(
                             `Checkmate! ${
                                 chess.turn() === 'w' ? 'black' : 'white'
                             } wins!`,
                         );
-                        // The winner is determined by checking for which side made the last move
                     } else if (chess.in_draw()) {
-                        // if it is a draw
-                        setOver('Draw'); // set message to "Draw"
+                        setOver('Draw');
                     } else {
                         setOver('Game over');
                     }
@@ -68,13 +58,11 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
 
                 return result;
             } catch (e) {
-                console.log('dont!!!');
                 return null;
             }
         },
         [chess],
     );
-
 
     function getMoveOptions(square: Square) {
         const moves = chess.moves({
@@ -106,7 +94,11 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
     }
 
     function onSquareClick(square: Square) {
-        if (chess.fen().split(' ')[1] !== orientation[0]) return;
+        if (
+            chess.fen().split(' ')[1] !== orientation[0] ||
+            players.length === 1
+        )
+            return;
         if (chess.game_over() || chess.in_checkmate()) {
             window.alert('Game End!');
             chess.reset();
@@ -124,9 +116,7 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
             );
 
             if (!foundMove) {
-                // check if clicked on new piece
                 const hasMoveOptions = getMoveOptions(square);
-                // if new piece, setMoveFrom, otherwise clear moveFrom
                 setMoveFrom(hasMoveOptions ? square : '');
                 return;
             }
@@ -179,14 +169,15 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
     }, [makeAMove]);
 
     useEffect(() => {
-        SocketApi.socket?.on('playerDisconnected', (player) => {
-            setOver(`${player.username} has disconnected`); // set game over
+        SocketApi.socket?.on('playerDisconnected', (userId) => {
+            cleanup();
         });
-    }, []);
+
+        return () => {};
+    }, [cleanup]);
 
     useEffect(() => {
         SocketApi.socket?.on('closeRoom', ({ roomId }) => {
-            console.log('closeRoom', roomId, room);
             if (roomId === room) {
                 cleanup();
             }
@@ -194,18 +185,18 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
     }, [room, cleanup]);
 
     return (
-        <Stack>
-            <Card>
-                <CardContent>
-                    <Typography variant="h5">Room ID: {room}</Typography>
-                </CardContent>
-            </Card>
-            <Stack flexDirection="row" sx={{ pt: 2 }}>
+        <div className={cls.wrapper}>
+            <div className={cls.header}>
+                <h1 className={cls.title}>Room ID: {room}</h1>
+            </div>
+
+            <div className={cls.content}>
                 <div
-                    className="board"
+                    className={cls.board}
+                    // className="board"
                     style={{
-                        maxWidth: 600,
-                        maxHeight: 600,
+                        maxWidth: 550,
+                        maxHeight: 550,
                         flexGrow: 1,
                     }}
                 >
@@ -215,7 +206,10 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
                         position={chess.fen()}
                         onSquareClick={onSquareClick}
                         promotionToSquare={moveTo}
+                        customDarkSquareStyle={{ backgroundColor: '#6f73d2' }}
+                        customLightSquareStyle={{ backgroundColor: '#9dacff' }}
                         customBoardStyle={{
+                            border: '2px solid black',
                             borderRadius: '4px',
                             boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
                         }}
@@ -224,34 +218,29 @@ export const Game = ({ players, room, orientation, cleanup }: GameProps) => {
                             ...optionSquares,
                             ...rightClickedSquares,
                         }}
-                      // onPieceDrop={onDrop}
-                      // isDraggablePiece={({ piece }) => {
-                      //     return piece[0] === orientation[0]; }}
                         boardOrientation={orientation}
                     />
                 </div>
-                {players.length > 0 && (
-                    <Box>
-                        <List>
-                            <ListSubheader>Players</ListSubheader>
-                            {players.map((p: any) => (
-                                <ListItem key={p.id}>
-                                    <ListItemText primary={p.username} />
-                                </ListItem>
+
+                {players?.length > 0 && (
+                    <div className={cls.listPlayers}>
+                        <div className={cls.listHeader}>
+                            <h2>List Players:</h2>
+                        </div>
+                        <ul className={cls.list}>
+                            {players.map((player) => (
+                                <li key={player.playerId}>
+                                    {userId === player.playerId
+                                        ? `You: ${player.username}`
+                                        : player.username}
+                                </li>
                             ))}
-                        </List>
-                    </Box>
+                        </ul>
+                    </div>
                 )}
-            </Stack>
-            <Modal
-                open={Boolean(over)}
-                title={over}
-                contentText={over}
-                handleContinue={() => {
-                    SocketApi.socket?.emit('closeRoom', { roomId: room });
-                    cleanup();
-                }}
-            />
-        </Stack>
+            </div>
+        </div>
     );
 };
+
+// TODO: create popup, when is game end or somebody disconnect

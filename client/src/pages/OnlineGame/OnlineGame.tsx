@@ -1,82 +1,112 @@
 import { useCallback, useEffect, useState } from 'react';
+import cls from './OnlineGame.module.scss';
 import SocketApi from '../../api/socket-api.ts';
-import { Modal } from '../../components/Modal/Modal.tsx';
-import { Container, TextField } from "@mui/material";
-import { Game } from "./Game.tsx";
-import InitGame from "./InitGame.tsx";
+import { Rooms } from '@/pages/OnlineGame/Rooms/Rooms.tsx';
+import { Game } from '@/pages/OnlineGame/Game.tsx';
+import { $api } from '@/api/api.ts';
+import socketApi from '@/api/socket-api.ts';
+import { useSelector } from 'react-redux';
+import { getUserData } from '@/entities/User';
+
+interface Player {
+    playerId: string;
+    username?: string;
+    isCreator?: boolean;
+}
+
+export interface Room {
+    roomId: string;
+    players: Player[];
+}
+
+export interface RoomData {
+    roomId: string;
+    players: Player[];
+}
+
+export interface RoomJoin {
+    roomId: string;
+    player: {
+        playerId: string;
+        username: string;
+    };
+}
 
 export const OnlineGame = () => {
-    const [username, setUsername] = useState('');
-    const [usernameSubmitted, setUsernameSubmitted] = useState(false);
-
-    const [room, setRoom] = useState('');
+    const [room, setRoom] = useState<RoomData | undefined>(undefined);
     const [orientation, setOrientation] = useState('');
-    const [players, setPlayers] = useState([]);
+    const [rooms, setRooms] = useState<Room[]>();
+    const userData = useSelector(getUserData);
 
-    const connectSocket = () => {
-        SocketApi.createConnection();
+    const connectSocket = (userId: string) => {
+        SocketApi.createConnection(userId);
     };
 
-    useEffect(() => {
-        connectSocket();
-    }, []);
+    const fetchRooms = async () => {
+        const response = await $api.get('/rooms');
+        setRooms(response.data);
+    };
 
-    // resets the states responsible for initializing a game
-    const cleanup = useCallback(() => {
-        setRoom('');
+    const cleanup = useCallback(async () => {
+        setRoom(undefined);
         setOrientation('');
-        setPlayers([]);
+        await fetchRooms();
     }, []);
 
     useEffect(() => {
-        SocketApi.socket?.on('opponentJoined', (roomData) => {
-            console.log('roomData', roomData);
-            setPlayers(roomData.players);
-        });
-    }, []);
+        if (!userData?.id) return;
+        connectSocket(userData.id);
+        fetchRooms();
+    }, [userData]);
 
-    return (
-        <Container>
-            <Modal
-                open={!usernameSubmitted}
-                handleClose={() => setUsernameSubmitted(true)}
-                title="Pick a username"
-                contentText="Please select a username"
-                handleContinue={() => {
-                    if (!username) return;
-                    SocketApi.socket?.emit('username', username);
-                    setUsernameSubmitted(true);
-                }}
-            >
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="username"
-                    label="Username"
-                    name="username"
-                    value={username}
-                    required
-                    onChange={(e) => setUsername(e.target.value)}
-                    type="text"
-                    fullWidth
-                    variant="standard"
-                />
-            </Modal>
-            {room ? (
-                <Game
-                    room={room}
-                    orientation={orientation}
-                    players={players}
-                    // the cleanup function will be used by Game to reset the state when a game is over
-                    cleanup={cleanup}
-                />
-            ) : (
-                <InitGame
-                    setRoom={setRoom}
-                    setOrientation={setOrientation}
-                    setPlayers={setPlayers}
-                />
-            )}
-        </Container>
+    useEffect(() => {
+        if (!userData?.id) return;
+        socketApi.updateRooms(fetchRooms);
+    }, [userData]);
+
+    const createRoom = useCallback(() => {
+        SocketApi.createRoom(
+            {
+                playerId: userData?.id || '',
+                username: userData?.login || '',
+            },
+            setRoom,
+            setOrientation,
+        );
+    }, [userData?.id, userData?.login]);
+
+    const joinRoom = useCallback(
+        (roomId: string) => {
+            SocketApi.joinRoom(
+                {
+                    roomId,
+                    player: {
+                        playerId: userData?.id || '',
+                        username: userData?.login || '',
+                    },
+                },
+                setRoom,
+                setOrientation,
+            );
+        },
+        [userData],
     );
+
+    useEffect(() => {
+        SocketApi.opponentJoined(setRoom);
+    }, [userData]);
+
+    const content = room ? (
+        <Game
+            players={room.players}
+            userId={userData?.id}
+            room={room.roomId}
+            orientation={orientation}
+            cleanup={cleanup}
+        />
+    ) : (
+        <Rooms rooms={rooms} createRoom={createRoom} joinRoom={joinRoom} />
+    );
+
+    return <div className={cls.wrapper}>{content}</div>;
 };

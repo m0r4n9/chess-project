@@ -1,8 +1,11 @@
-// src/sockets/sockets.module.ts
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ChatGateway } from './chat.gateway';
+import { RoomsModule } from '../rooms/rooms.module';
 
 @Module({
-  providers: [ChatGateway],
+  providers: [],
+  imports: [
+      forwardRef(() => RoomsModule)
+  ]
 })
 export class SocketsModule {}

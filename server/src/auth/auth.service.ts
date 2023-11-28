@@ -38,11 +38,21 @@ export class AuthService {
         return this.generateToke(user);
     }
 
+    async refresh(refreshToken: {token: string}) {
+        return this.verifyToken(refreshToken.token);
+    }
+
     private async generateToke(user: User) {
         const payload = { id: user.id, login: user.login };
+        const jwtToken = this.jwtService.sign(payload);
         return {
-            token: this.jwtService.sign(payload),
-        };
+            user: payload,
+            jwtToken
+        }
+    }
+
+    private verifyToken(token: string) {
+        return this.jwtService.verify(token);
     }
 
     private async validateUser(userDto: CreateUserDto) {

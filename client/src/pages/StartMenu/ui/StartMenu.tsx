@@ -1,9 +1,14 @@
 import { motion } from 'framer-motion';
 import cls from './StartMenu.module.scss';
 import { useEffect, useState } from 'react';
-import { useMenuAnimation } from './useMenuAnimation.ts';
+import { useMenuAnimation } from '../useMenuAnimation.ts';
 import { BurgerMenu } from './BurgerMenu/BurgerMenu.tsx';
 import { ReactComponent as BurgerIcon } from '@/assets/icons/burger.svg';
+
+interface linksProps {
+    href: string;
+    text: string;
+}
 
 export const StartMenu = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -12,9 +17,24 @@ export const StartMenu = () => {
     useEffect(() => {
         const timeId = setTimeout(() => {
             setIsOpen(true);
-        }, 1000);
+        }, 500);
         return () => clearTimeout(timeId);
     }, []);
+
+    const items: linksProps[] = [
+        {
+            href: '/single',
+            text: 'Play Offline',
+        },
+        {
+            href: '/single',
+            text: 'Play Offline',
+        },
+        {
+            href: '/single',
+            text: 'Play Offline',
+        },
+    ];
 
     return (
         <div className={cls.Menu}>

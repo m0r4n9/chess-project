@@ -17,19 +17,29 @@ export const Sidebar = memo((props: SidebarProps) => {
             {isOpen && (
                 <motion.div
                     initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: 500, opacity: 1 }}
-                    exit={{
+                    animate={{
+                        width: 500,
                         opacity: 1,
+                        transition: { duration: 0.2 },
+                    }}
+                    exit={{
                         width: 0,
+                        pointerEvents: 'none',
                         transition: {
-                            duration: 0.3,
+                            duration: 0.2,
                         },
                     }}
                     className={cls.sidebar}
                 >
-                    <Overlay onClick={close}  />
+                    <Overlay onClick={close} />
                     <div className={cls.container}>
-                        {children}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1, transition: { delay: 0.2 } }}
+                            exit={{ opacity: 0 }}
+                        >
+                            {children}
+                        </motion.div>
                     </div>
                 </motion.div>
             )}

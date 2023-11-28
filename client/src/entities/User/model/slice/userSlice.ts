@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { checkAuth } from '../services/checkAuth.ts';
 import { User, UserSchema } from "../types/User.ts";
+import { ResponseAuth } from '@/features/Auth';
 
 const initialState: UserSchema = {
     isLoading: false,
@@ -11,9 +12,9 @@ const userSlice = createSlice({
     name: 'User',
     initialState,
     reducers: {
-        setAuthData: (state, action: PayloadAction<User>) => {
-            state.authData = action.payload;
-            localStorage.setItem('token', action.payload.accessToken);
+        setAuthData: (state, action: PayloadAction<ResponseAuth>) => {
+            state.authData = action.payload.user;
+            localStorage.setItem('token', action.payload.jwtToken);
         },
         logout: (state) => {
             localStorage.removeItem('token');
