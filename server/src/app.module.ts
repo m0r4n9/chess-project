@@ -1,8 +1,10 @@
-import {Module} from '@nestjs/common';
-import {AppController} from './app.controller';
-import {AppService} from './app.service';
-import {SocketGateway} from './socket/socket.gateway';
-import {SequelizeModule} from "@nestjs/sequelize";
+import { Module } from '@nestjs/common';
+import { SocketsModule } from './socket/socket.module';
+import { ChatGateway } from './socket/chat.gateway';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { RoomsModule } from './rooms/rooms.module';
 
 @Module({
     imports: [
@@ -20,12 +22,15 @@ import {SequelizeModule} from "@nestjs/sequelize";
             //     force: true
             // },
             define: {
-                timestamps: false
-            }
+                timestamps: false,
+            },
         }),
+        // SocketsModule,
+        AuthModule,
+        UserModule,
+        RoomsModule,
     ],
-    controllers: [AppController],
-    providers: [AppService, SocketGateway],
+    controllers: [],
+    providers: [ChatGateway],
 })
-export class AppModule {
-}
+export class AppModule {}

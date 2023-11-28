@@ -1,9 +1,35 @@
 :root {
+    --pixel-fonts: 'Pixeboy-z8XGD';
 
+    --platinum: #e6e6e6;
+    --fluorescent-blue: #00e6e5;
+    --pixel-bg: var(--platinum);
+    --pixel-border: #000;
+    --pixel-border-2: var(--fluorescent-blue);
+    --pixel-border-3: var(--pixel-border);
+    --pixel: .125rem;
+}
+
+@font-face {
+    font-family: 'Pixeboy-z8XGD';
+    src: url("assets/fonts/Pixeboy.ttf");
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+button {
+    background: none;
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
+.app {
+    font-family: 'Pixeboy-z8XGD', serif;
+    background-color: #182f75;
+    min-height: 100vh;
 }

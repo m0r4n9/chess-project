@@ -1,0 +1,1 @@
+export { StartMenu } from './ui/StartMenu.tsx';

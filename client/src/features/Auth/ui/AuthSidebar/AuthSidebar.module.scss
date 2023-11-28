@@ -1,0 +1,59 @@
+@import "@/mixins/mixins";
+
+.authContent {
+    padding: 20px;
+
+    .containerTitle {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        font-size: 34px;
+    }
+
+    .containerInput {
+        margin-top: 12px;
+        font-size: 24px;
+
+        .wrapperInput {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            input {
+                margin-top: 6px;
+                height: 30px;
+                border-radius: 4px;
+                width: 100%;
+            }
+
+            &:first-child {
+                margin-bottom: 20px
+            }
+        }
+
+        .containerBtns {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .signBtn {
+            @include pixelButton;
+            margin-top: 20px;
+            width: 50%;
+            height: 34px;
+        }
+
+        .regBtn {
+            margin-top: 10px;
+            font-size: 18px;
+            font-family: var(--pixel-fonts);
+            transition: color .2s ease;
+
+            &:hover {
+                color: white;
+            }
+        }
+    }
+}

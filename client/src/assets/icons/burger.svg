@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_Слой_2" data-name="Слой 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 93.05 64.79" width="26" height="26">
+  <defs>
+    <style>
+      .burger {
+        fill: none;
+        stroke: white;
+        stroke-miterlimit: 10;
+        stroke-width: 10px;
+      }
+    </style>
+  </defs>
+  <g id="_Слой_1-2">
+    <g>
+      <line class="burger" x1="0" y1="1" x2="93.05" y2="1"/>
+      <line class="burger" y1="32.74" x2="93.04" y2="32.74"/>
+      <line class="burger" y1="63.79" x2="93.04" y2="63.79"/>
+    </g>
+  </g>
+</svg>

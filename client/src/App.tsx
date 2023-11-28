@@ -1,31 +1,23 @@
-import React, {useState} from 'react';
-import './App.css';
-import {useConnectSocket} from "./hooks/useConnectSocket/useConnectSocket.ts";
-import SocketApi from "./api/socket-api.ts";
+import { AppRouter } from './providers/routes/AppRouter.tsx';
+import { useEffect } from 'react';
+import { TOKEN_LOCALSTORAGE_KEY } from '@/consts/localStorage.ts';
+import { useAppDispatch } from '@/hooks/useAppDispatch/useAppDispatch.ts';
+import { checkAuth } from '@/entities/User/model/services/checkAuth.ts';
 
 const App = () => {
-    const [text, setText] = useState('');
-    const {message} = useConnectSocket();
+    const dispatch = useAppDispatch();
 
-    const sendMessage = () => {
-        SocketApi.socket?.emit("server-path", {text});
-    }
+    useEffect(() => {
+        if (localStorage.getItem(TOKEN_LOCALSTORAGE_KEY)) {
+            dispatch(
+                checkAuth(localStorage.getItem(TOKEN_LOCALSTORAGE_KEY) || ''),
+            );
+        }
+    }, []);
 
     return (
-        <div className={'app'}>
-            <h1>Websocket</h1>
-
-            <div>
-                <input type="text" onChange={(e) => setText(e.currentTarget.value)}/>
-                <button onClick={sendMessage}>
-                    Send
-                </button>
-            </div>
-
-            <div>
-                <h3>Back-end message</h3>
-                {message}
-            </div>
+        <div className="app">
+            <AppRouter />
         </div>
     );
 };
