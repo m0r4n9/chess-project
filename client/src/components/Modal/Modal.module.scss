@@ -1,0 +1,56 @@
+.Modal {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    pointer-events: auto;
+    z-index: -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content {
+    padding: 36px;
+    border-radius: 4px;
+    max-width: 60%;
+    background: white;
+}
+
+.opened {
+    pointer-events: auto;
+    opacity: 1;
+    z-index: var(--modal-z-index);
+
+    .content {
+        animation: appearContent 0.3s ease;
+    }
+}
+
+.isClosing {
+
+    .content {
+        animation: closeContent 0.3s ease;
+    }
+}
+
+
+@keyframes appearContent {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+@keyframes closeContent {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}

@@ -1,5 +1,11 @@
+@import "@/mixins/mixins";
+
 .clear {
     border: none;
     outline: none;
     background: none;
+}
+
+.pixel {
+    @include pixelButton;
 }

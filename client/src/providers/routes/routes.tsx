@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
 import { StartMenu } from '@/pages/StartMenu';
+import { OnlineGame } from '@/pages/OnlineGame';
 import OfflineGame from '@/pages/OfflineGame/OfflineGame.tsx';
-import { OnlineGame } from '@/pages/OnlineGame/OnlineGame.tsx';
+import { ProfilePage } from '@/pages/ProfilePage';
 
 interface RoutesProps {
     path: string;
@@ -21,4 +22,8 @@ export const listRoutes: RoutesProps[] = [
         path: '/online',
         element: <OnlineGame />,
     },
+    {
+        path: "/profile/:id",
+        element: <ProfilePage/>
+    }
 ];

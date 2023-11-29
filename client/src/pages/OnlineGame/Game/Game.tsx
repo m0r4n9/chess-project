@@ -2,9 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import cls from './Game.module.scss';
 import { Chess } from 'chess.js';
 import { Chessboard } from 'react-chessboard';
-import SocketApi from '../../api/socket-api.ts';
 import { Square } from 'react-chessboard/dist/chessboard/types';
-import { Move } from '../../interfaces/ChessTypes/chess.ts';
+import { Move } from '@/interfaces/ChessTypes/chess.ts';
+import SocketApi from '@/api/socket-api.ts';
+import { Modal } from '@/components/Modal/Modal.tsx';
+import { useCycle } from 'framer-motion';
+import Button from '@/components/Button/Button.tsx';
 
 interface GameProps {
     players: any[];
@@ -30,17 +33,13 @@ export const Game = ({
     const [moveTo, setMoveTo] = useState<Square | null>(null);
     const [moveFrom, setMoveFrom] = useState('');
 
+    const [isModalOpen, toggleModal] = useCycle(true, false);
+
     const makeAMove = useCallback(
         (move: any) => {
             try {
                 const result = chess.move(move);
                 setFen(chess.fen());
-
-                console.log(
-                    'over, checkmate',
-                    chess.game_over(),
-                    chess.in_checkmate(),
-                );
 
                 if (chess.game_over()) {
                     if (chess.in_checkmate()) {
@@ -99,10 +98,6 @@ export const Game = ({
             players.length === 1
         )
             return;
-        if (chess.game_over() || chess.in_checkmate()) {
-            window.alert('Game End!');
-            chess.reset();
-        }
         setRightClickedSquares({});
 
         // Куда пойдет фигура
@@ -143,12 +138,10 @@ export const Game = ({
             });
 
             SocketApi.socket?.emit('move', {
-                // <- 3 emit a move event.
                 move,
                 room,
-            }); // this event will be transmitted to the opponent via the server
+            });
 
-            // if invalid, setMoveFrom and getMoveOptions
             if (move === null) {
                 const hasMoveOptions = getMoveOptions(square);
                 if (hasMoveOptions) setMoveFrom(square);
@@ -163,10 +156,13 @@ export const Game = ({
     }
 
     useEffect(() => {
-        SocketApi.socket?.on('move', (move) => {
-            makeAMove(move);
-        });
+        console.log('Move');
+        SocketApi.makeMove(makeAMove);
     }, [makeAMove]);
+
+    useEffect(() => {
+        SocketApi.test();
+    }, []);
 
     useEffect(() => {
         SocketApi.socket?.on('playerDisconnected', (userId) => {
@@ -176,13 +172,6 @@ export const Game = ({
         return () => {};
     }, [cleanup]);
 
-    useEffect(() => {
-        SocketApi.socket?.on('closeRoom', ({ roomId }) => {
-            if (roomId === room) {
-                cleanup();
-            }
-        });
-    }, [room, cleanup]);
 
     return (
         <div className={cls.wrapper}>
@@ -239,6 +228,24 @@ export const Game = ({
                     </div>
                 )}
             </div>
+            {Boolean(over) && (
+                <Modal isOpen={isModalOpen}>
+                    <div>
+                        <div>
+                            <h1>{over}</h1>
+                            <h2>Game End!</h2>
+                        </div>
+                        <div>
+                            <Button variant="pixel" onClick={() => {
+                                cleanup()
+                                SocketApi.socket?.emit("closeRoom", {roomId: room});
+                            }}>
+                                Закрыть
+                            </Button>
+                        </div>
+                    </div>
+                </Modal>
+            )}
         </div>
     );
 };

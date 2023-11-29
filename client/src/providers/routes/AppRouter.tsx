@@ -4,7 +4,7 @@ import { listRoutes } from './routes.tsx';
 
 export const AppRouter = memo(() => {
     return (
-        <Suspense fallback={<h1>Loading...</h1>}>
+        <Suspense fallback="">
             <Routes>
                 {listRoutes.map((route) => (
                     <Route

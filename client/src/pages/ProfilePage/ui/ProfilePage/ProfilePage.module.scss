@@ -1,3 +1,14 @@
 .ProfilePage {
 
 }
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 30px 0;
+
+    color: white;
+}

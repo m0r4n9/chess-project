@@ -15,33 +15,33 @@ export const StartMenu = () => {
     const scope = useMenuAnimation({ isOpen });
 
     useEffect(() => {
+        if (localStorage.getItem('_inited')) {
+            setIsOpen(true);
+            return;
+        }
+
         const timeId = setTimeout(() => {
             setIsOpen(true);
         }, 500);
+
+        localStorage.setItem('_inited', 'true');
+
         return () => clearTimeout(timeId);
     }, []);
 
-    const items: linksProps[] = [
-        {
-            href: '/single',
-            text: 'Play Offline',
-        },
-        {
-            href: '/single',
-            text: 'Play Offline',
-        },
-        {
-            href: '/single',
-            text: 'Play Offline',
-        },
-    ];
 
+    // TODO: fix animation _inited
     return (
         <div className={cls.Menu}>
             <BurgerMenu trigger={<BurgerIcon />} />
             <div className={cls.content}>
                 <motion.div
-                    initial={{ opacity: 0, scale: 0 }}
+                    initial={
+                        !localStorage.getItem('_inited') && {
+                            opacity: 0,
+                            scale: 0,
+                        }
+                    }
                     animate={{
                         opacity: 1,
                         scale: 1,
@@ -63,7 +63,7 @@ export const StartMenu = () => {
                     animate={{
                         opacity: 1,
                         transition: {
-                            delay: 1.5,
+                            // delay: 1.5,
                             duration: 1,
                         },
                     }}

@@ -40,6 +40,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         userData: { playerId: string; username: string },
     ) {
         const roomId = v4();
+        await client.join(roomId);
 
         const room = await this.roomService.create({
             roomId,
@@ -48,7 +49,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 username: userData.username,
             },
         });
-        await client.join(roomId);
         this.server.emit('updateRooms');
         return room;
     }
@@ -96,19 +96,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage('move')
     handleMove(client: Socket, data: { room: string; move: any }) {
-        client.to(data.room).emit('move', data.move);
+        this.server.in(data.room).emit('move', data.move);
     }
 
     @SubscribeMessage('closeRoom')
     async handleCloseRoom(client: Socket, data: { roomId: string }) {
         client.to(data.roomId).emit('closeRoom', data);
 
-        const clientSockets = await this.server.in(data.roomId).fetchSockets();
-
-        clientSockets.forEach((s) => {
-            s.leave(data.roomId);
-        });
-
-        this.rooms.delete(data.roomId);
+        const room = await this.roomService.getRoom(data.roomId);
+        await room.destroy();
     }
 }

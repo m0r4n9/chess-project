@@ -111,16 +111,13 @@ const OfflineGame = () => {
             );
 
             if (!foundMove) {
-                // check if clicked on new piece
                 const hasMoveOptions = getMoveOptions(square);
-                // if new piece, setMoveFrom, otherwise clear moveFrom
                 setMoveFrom(hasMoveOptions ? square : '');
                 return;
             }
 
             setMoveTo(square);
 
-            // if promotion move
             if (
                 (foundMove.color === 'w' &&
                     foundMove.piece === 'p' &&
@@ -133,7 +130,6 @@ const OfflineGame = () => {
                 return;
             }
 
-            // is normal move
             const gameCopy = { ...game };
             const move = gameCopy.move({
                 from: moveFrom,
@@ -141,7 +137,6 @@ const OfflineGame = () => {
                 promotion: 'q',
             });
 
-            // if invalid, setMoveFrom and getMoveOptions
             if (move === null) {
                 const hasMoveOptions = getMoveOptions(square);
                 if (hasMoveOptions) setMoveFrom(square);
@@ -158,6 +153,8 @@ const OfflineGame = () => {
             return;
         }
     }
+
+    // TODO: показыать правильно чей сейчас ход
 
     return (
         <div className={cls.page}>
@@ -193,6 +190,8 @@ const OfflineGame = () => {
                         borderRadius: '4px',
                         boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
                     }}
+                    customDarkSquareStyle={{ backgroundColor: '#6f73d2' }}
+                    customLightSquareStyle={{ backgroundColor: '#9dacff' }}
                     customSquareStyles={{
                         ...moveSquares,
                         ...optionSquares,

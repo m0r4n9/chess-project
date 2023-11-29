@@ -57,7 +57,16 @@ export const BurgerMenu = memo((props: BurgerMenuProps) => {
                         <ul className={cls.toolsList}>
                             <li className={cls.toolsListItem}>
                                 {user ? (
-                                    <Button className={cls.btn}>profile</Button>
+                                    <a
+                                        href={`/profile/${user.id}`}
+                                        style={{
+                                            textDecoration: 'none',
+                                            cursor: 'pointer',
+                                        }}
+                                        className={cls.btn}
+                                    >
+                                        profile
+                                    </a>
                                 ) : (
                                     <Button
                                         className={cls.btn}

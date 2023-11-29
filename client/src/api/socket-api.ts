@@ -58,6 +58,20 @@ class SocketApi {
             });
         });
     }
+
+    static makeMove(makeAMove: (move: any) => void) {
+        SocketApi.socket?.on('move', (move) => {
+            makeAMove(move);
+        });
+    }
+
+    static test() {
+        this.socket?.on("getMes", (data) => {
+            console.log(data);
+        })
+    }
+
+
 }
 
 export default SocketApi;
