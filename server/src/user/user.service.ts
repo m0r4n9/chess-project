@@ -24,4 +24,12 @@ export class UserService {
     const users = await this.userRepository.findAll({ include: { all: true } });
     return users;
   }
+
+  async getUserById(userId: string) {
+    return await this.userRepository.findByPk(userId, {
+      attributes: {
+        exclude: ["password"]
+      }
+    });
+  }
 }

@@ -5,7 +5,9 @@
 
     .containerTitle {
         display: flex;
+        flex-direction: column;
         justify-content: center;
+        align-items: center;
         width: 100%;
         font-size: 34px;
     }
@@ -26,7 +28,7 @@
                 width: 100%;
             }
 
-            &:first-child {
+            &:not(:last-child) {
                 margin-bottom: 20px
             }
         }

@@ -14,12 +14,19 @@
     flex-direction: column;
     gap: 24px;
 
+    button {
+        background-color: gray;
+        max-width: 12rem;
+    }
+
     .title {
         font-size: 80px;
     }
 
-    .btnJoin {
-
+    @media (max-width: 990px) {
+        .title {
+            font-size: 50px;
+        }
     }
 }
 
@@ -67,4 +74,10 @@
     flex-direction: column;
     align-items: center;
     gap: 8px;
+}
+
+.joinBtn {
+    color: white;
+    font-size: 22px;
+    font-family: 'Pixeboy-z8XGD', serif;
 }

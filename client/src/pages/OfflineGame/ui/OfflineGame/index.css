@@ -1,0 +1,102 @@
+/** {*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*}*/
+
+/*.app {*/
+/*    width: 100vw;*/
+/*    height: 100vh;*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*}*/
+
+/*.board {*/
+/*    width: calc(64px * 8);*/
+/*    height: calc(64px * 8);*/
+/*    display: flex;*/
+/*    flex-wrap: wrap;*/
+/*}*/
+
+/*.cell {*/
+/*    width: 64px;*/
+/*    height: 64px;*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*}*/
+
+/*.cell img {*/
+/*    width: 50px;*/
+/*    height: auto;*/
+/*    position: relative;*/
+/*}*/
+
+/*.BLACK {*/
+/*    background-color: deepskyblue;*/
+/*}*/
+
+/*.WHITE {*/
+/*    background-color: #eebc57;*/
+/*}*/
+
+.selected {
+    background-color: #d74d4d;
+}
+
+/*.available {*/
+/*    height: 12px;*/
+/*    width: 12px;*/
+/*    border-radius: 50%;*/
+/*    background-color: green;*/
+/*}*/
+
+/*.lost {*/
+/*    height: calc(50vh - 60px);*/
+/*    padding: 30px;*/
+/*    margin-left: 50px;*/
+/*    background-color: lightgrey;*/
+/*}*/
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.appS {
+    width: 100vw;
+    min-height: 100vh;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+.BLACK {
+    background-color: #393939;
+}
+
+.WHITE {
+    background-color: #FFFFFF;
+}
+
+
+
+.lost {
+    height: calc(50vh - 60px);
+    padding: 30px;
+    margin-left: 50px;
+    background-color: lightgrey;
+}
+
+.backMenu {
+    position: absolute;
+    top: 30px;
+    left: 20px;
+    color: white;
+    font-size: 20px;
+}

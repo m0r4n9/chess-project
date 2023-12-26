@@ -2,9 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import cls from './Game.module.scss';
 import { Chess } from 'chess.js';
 import { Chessboard } from 'react-chessboard';
-import SocketApi from '../../api/socket-api.ts';
 import { Square } from 'react-chessboard/dist/chessboard/types';
-import { Move } from '../../interfaces/ChessTypes/chess.ts';
+import { Move } from '@/interfaces/ChessTypes/chess.ts';
+import SocketApi from '@/api/socket-api.ts';
+import { Modal } from '@/components/Modal/Modal.tsx';
+import { useCycle } from 'framer-motion';
+import Button from '@/components/Button/Button.tsx';
 
 interface GameProps {
     players: any[];
@@ -30,17 +33,63 @@ export const Game = ({
     const [moveTo, setMoveTo] = useState<Square | null>(null);
     const [moveFrom, setMoveFrom] = useState('');
 
+    const [isModalOpen, toggleModal] = useCycle(true, false);
+
+    const threeDPieces = useMemo(() => {
+        const pieces: { piece: string; pieceHeight: number }[] = [
+            { piece: 'wP', pieceHeight: 1 },
+            { piece: 'wN', pieceHeight: 1.2 },
+            { piece: 'wB', pieceHeight: 1.2 },
+            { piece: 'wR', pieceHeight: 1.2 },
+            { piece: 'wQ', pieceHeight: 1.5 },
+            { piece: 'wK', pieceHeight: 1.6 },
+            { piece: 'bP', pieceHeight: 1 },
+            { piece: 'bN', pieceHeight: 1.2 },
+            { piece: 'bB', pieceHeight: 1.2 },
+            { piece: 'bR', pieceHeight: 1.2 },
+            { piece: 'bQ', pieceHeight: 1.5 },
+            { piece: 'bK', pieceHeight: 1.6 },
+        ];
+
+        interface test {
+            squareWidth: number;
+            square: any;
+        }
+        const pieceComponents = {} as Record<string, any>;
+
+        pieces.forEach(({ piece, pieceHeight }) => {
+            // @ts-ignore
+            pieceComponents[piece] = ({ squareWidth, square }) => (
+                <div
+                    style={{
+                        width: squareWidth,
+                        height: squareWidth,
+                        position: 'relative',
+                        pointerEvents: 'none',
+                    }}
+                >
+                    <img
+                        src={`src/assets/figures/${piece}.png`}
+                        width={'40%'}
+                        height={'80%'}
+                        style={{
+                            position: 'absolute',
+                            bottom: `${0.2 * squareWidth}px`,
+                            left: `${0.3 * squareWidth}px`,
+                            //  objectFit: piece[1] === "K" ? "contain" : "cover",
+                        }}
+                    />
+                </div>
+            );
+        });
+        return pieceComponents;
+    }, []);
+
     const makeAMove = useCallback(
         (move: any) => {
             try {
                 const result = chess.move(move);
                 setFen(chess.fen());
-
-                console.log(
-                    'over, checkmate',
-                    chess.game_over(),
-                    chess.in_checkmate(),
-                );
 
                 if (chess.game_over()) {
                     if (chess.in_checkmate()) {
@@ -99,10 +148,6 @@ export const Game = ({
             players.length === 1
         )
             return;
-        if (chess.game_over() || chess.in_checkmate()) {
-            window.alert('Game End!');
-            chess.reset();
-        }
         setRightClickedSquares({});
 
         // Куда пойдет фигура
@@ -143,12 +188,10 @@ export const Game = ({
             });
 
             SocketApi.socket?.emit('move', {
-                // <- 3 emit a move event.
                 move,
                 room,
-            }); // this event will be transmitted to the opponent via the server
+            });
 
-            // if invalid, setMoveFrom and getMoveOptions
             if (move === null) {
                 const hasMoveOptions = getMoveOptions(square);
                 if (hasMoveOptions) setMoveFrom(square);
@@ -163,10 +206,13 @@ export const Game = ({
     }
 
     useEffect(() => {
-        SocketApi.socket?.on('move', (move) => {
-            makeAMove(move);
-        });
+        console.log('Move');
+        SocketApi.makeMove(makeAMove);
     }, [makeAMove]);
+
+    useEffect(() => {
+        SocketApi.test();
+    }, []);
 
     useEffect(() => {
         SocketApi.socket?.on('playerDisconnected', (userId) => {
@@ -176,13 +222,6 @@ export const Game = ({
         return () => {};
     }, [cleanup]);
 
-    useEffect(() => {
-        SocketApi.socket?.on('closeRoom', ({ roomId }) => {
-            if (roomId === room) {
-                cleanup();
-            }
-        });
-    }, [room, cleanup]);
 
     return (
         <div className={cls.wrapper}>
@@ -206,8 +245,18 @@ export const Game = ({
                         position={chess.fen()}
                         onSquareClick={onSquareClick}
                         promotionToSquare={moveTo}
-                        customDarkSquareStyle={{ backgroundColor: '#6f73d2' }}
-                        customLightSquareStyle={{ backgroundColor: '#9dacff' }}
+                        customPieces={threeDPieces}
+                        customLightSquareStyle={{
+                            backgroundColor: '#e0c094',
+                            backgroundImage: 'url("WhiteBlock.webp")',
+                            backgroundSize: 'cover',
+                        }}
+                        customDarkSquareStyle={{
+                            backgroundColor: "rgba(255,255,255,0.43)",
+                            backgroundImage: 'url("BlackBlock.png")',
+                            backgroundSize: "cover"
+
+                        }}
                         customBoardStyle={{
                             border: '2px solid black',
                             borderRadius: '4px',
@@ -239,6 +288,24 @@ export const Game = ({
                     </div>
                 )}
             </div>
+            {Boolean(over) && (
+                <Modal isOpen={isModalOpen}>
+                    <div>
+                        <div>
+                            <h1>{over}</h1>
+                            <h2>Game End!</h2>
+                        </div>
+                        <div>
+                            <Button variant="pixel" onClick={() => {
+                                cleanup()
+                                SocketApi.socket?.emit("closeRoom", {roomId: room});
+                            }}>
+                                Закрыть
+                            </Button>
+                        </div>
+                    </div>
+                </Modal>
+            )}
         </div>
     );
 };

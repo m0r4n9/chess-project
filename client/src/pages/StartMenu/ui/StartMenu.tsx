@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useMenuAnimation } from '../useMenuAnimation.ts';
 import { BurgerMenu } from './BurgerMenu/BurgerMenu.tsx';
 import { ReactComponent as BurgerIcon } from '@/assets/icons/burger.svg';
+import { useSelector } from 'react-redux';
+import { getUserData } from '@/entities/User/index.ts';
 
 interface linksProps {
     href: string;
@@ -12,36 +14,36 @@ interface linksProps {
 
 export const StartMenu = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const user = useSelector(getUserData);
     const scope = useMenuAnimation({ isOpen });
 
     useEffect(() => {
+        if (localStorage.getItem('_inited')) {
+            setIsOpen(true);
+            return;
+        }
+
         const timeId = setTimeout(() => {
             setIsOpen(true);
         }, 500);
+
+        localStorage.setItem('_inited', 'true');
+
         return () => clearTimeout(timeId);
     }, []);
 
-    const items: linksProps[] = [
-        {
-            href: '/single',
-            text: 'Play Offline',
-        },
-        {
-            href: '/single',
-            text: 'Play Offline',
-        },
-        {
-            href: '/single',
-            text: 'Play Offline',
-        },
-    ];
-
+    // TODO: fix animation _inited
     return (
         <div className={cls.Menu}>
             <BurgerMenu trigger={<BurgerIcon />} />
             <div className={cls.content}>
                 <motion.div
-                    initial={{ opacity: 0, scale: 0 }}
+                    initial={
+                        !localStorage.getItem('_inited') && {
+                            opacity: 0,
+                            scale: 0,
+                        }
+                    }
                     animate={{
                         opacity: 1,
                         scale: 1,
@@ -63,7 +65,7 @@ export const StartMenu = () => {
                     animate={{
                         opacity: 1,
                         transition: {
-                            delay: 1.5,
+                            // delay: 1.5,
                             duration: 1,
                         },
                     }}
@@ -77,18 +79,32 @@ export const StartMenu = () => {
                         }}
                     >
                         <li>
-                            <a
-                                href="/single"
-                                className={cls.pixel}
-                                style={{ color: 'white' }}
-                            >
-                                Play Offline
+                            <a href="/offline" className={cls.pixel}>
+                                Play with friend!
                             </a>
                         </li>
                         <li>
-                            <a href="/online" className={cls.pixel}>
+                            <a href="/single" className={cls.pixel}>
+                                Play with computer
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                onClick={(e) => {
+                                    !user?.id && e.preventDefault()
+                                }}
+                                href="/online"
+                                className={`${cls.pixel} ${
+                                    !user?.id ? cls.disabled : ''
+                                } `}
+                            >
                                 Play Online
                             </a>
+                            {!user?.id && (
+                                <div className={cls.requireAuthInfo}>
+                                    Чтобы играть онлайн, войдите в аккаунт
+                                </div>
+                            )}
                         </li>
                         <li>
                             <a href="#" className={cls.pixel}>

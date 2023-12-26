@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import cls from './OnlineGame.module.scss';
 import SocketApi from '../../api/socket-api.ts';
-import { Rooms } from '@/pages/OnlineGame/Rooms/Rooms.tsx';
-import { Game } from '@/pages/OnlineGame/Game.tsx';
+import { Rooms } from './Rooms/Rooms.tsx';
+import { Game } from './Game/Game.tsx';
 import { $api } from '@/api/api.ts';
 import socketApi from '@/api/socket-api.ts';
 import { useSelector } from 'react-redux';
 import { getUserData } from '@/entities/User';
+import Button from '@/components/Button/Button.tsx';
 
 interface Player {
     playerId: string;
@@ -32,7 +33,7 @@ export interface RoomJoin {
     };
 }
 
-export const OnlineGame = () => {
+const OnlineGame = () => {
     const [room, setRoom] = useState<RoomData | undefined>(undefined);
     const [orientation, setOrientation] = useState('');
     const [rooms, setRooms] = useState<Room[]>();
@@ -108,5 +109,20 @@ export const OnlineGame = () => {
         <Rooms rooms={rooms} createRoom={createRoom} joinRoom={joinRoom} />
     );
 
-    return <div className={cls.wrapper}>{content}</div>;
+    return (
+        <div className={cls.wrapper}>
+            <div
+                style={{
+                    padding: '10px 20px',
+                }}
+            >
+                <a href={room ? '/online' : '/'} className={cls.exitLink}>
+                    Back to main menu
+                </a>
+            </div>
+            {content}
+        </div>
+    );
 };
+
+export default OnlineGame;

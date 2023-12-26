@@ -3,6 +3,7 @@
 .page {
     width: 100vw;
     min-height: 100vh;
+    height: 100%;
     display: flex;
     justify-content: center;
 }
@@ -10,12 +11,20 @@
 .container {
     width: 70vw;
     max-width: 70vh;
-    margin: 3rem auto;
+    margin: 1rem auto;
 }
 
 .header {
     color: white;
     margin-bottom: 20px;
+
+    .linkToMenu {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        color: white;
+        font-size: 20px;
+    }
 
     .level {
         display: flex;
@@ -25,7 +34,7 @@
 
     .btn {
         @include pixelButton;
-        background-color: red;
+        background-color: #b9b9b9;
     }
 }
 
@@ -37,7 +46,8 @@
 
     .btn {
         @include pixelButton;
-        background-color: red;
+
+        background-color: white;
         padding: 10px 0;
     }
 }

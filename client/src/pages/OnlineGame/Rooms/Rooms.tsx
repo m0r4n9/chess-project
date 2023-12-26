@@ -18,8 +18,10 @@ export const Rooms = memo((props: RoomsProps) => {
                 <div>
                     <h2 className={cls.title}>Online Chess</h2>
                 </div>
-                <Button className={cls.btnJoin}>Join Game</Button>
-                <Button onClick={createRoom}>Start a game</Button>
+                {/*<Button variant="pixel" >Join Game</Button>*/}
+                <Button variant="pixel" onClick={createRoom}>
+                    Start a game
+                </Button>
             </div>
             <div className={cls.content}>
                 <div className={cls.headerContent}>
@@ -36,6 +38,7 @@ export const Rooms = memo((props: RoomsProps) => {
                                             onClick={() =>
                                                 joinRoom(room.roomId)
                                             }
+                                            className={cls.joinBtn}
                                         >
                                             Join
                                         </Button>
