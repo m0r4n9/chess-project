@@ -117,7 +117,7 @@ const OnlineGame = () => {
                 }}
             >
                 <a href={room ? '/online' : '/'} className={cls.exitLink}>
-                    Назад
+                    Back to main menu
                 </a>
             </div>
             {content}

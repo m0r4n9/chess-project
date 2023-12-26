@@ -37,7 +37,7 @@ const OfflineGame = memo(() => {
     return (
         <div className={'appS'}>
             <div>
-                <a href='/' className="backMenu">Вернуться в главное меню</a>
+                <a href='/' className="backMenu">Back to main menu</a>
                 <Timer currentPlayer={currentPlayer} restart={restart} />
             </div>
             <BoardComponent

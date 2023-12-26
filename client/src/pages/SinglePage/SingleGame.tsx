@@ -1,4 +1,4 @@
-import { ReactNode, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import cls from './SinglePage.module.scss';
 import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
@@ -41,54 +41,54 @@ const SingleGame = () => {
     // }, [game.history()]);
 
     const threeDPieces = useMemo(() => {
-        const pieces: {piece: string, pieceHeight: number}[] = [
-          { piece: "wP", pieceHeight: 1 },
-          { piece: "wN", pieceHeight: 1.2 },
-          { piece: "wB", pieceHeight: 1.2 },
-          { piece: "wR", pieceHeight: 1.2 },
-          { piece: "wQ", pieceHeight: 1.5 },
-          { piece: "wK", pieceHeight: 1.6 },
-          { piece: "bP", pieceHeight: 1 },
-          { piece: "bN", pieceHeight: 1.2 },
-          { piece: "bB", pieceHeight: 1.2 },
-          { piece: "bR", pieceHeight: 1.2 },
-          { piece: "bQ", pieceHeight: 1.5 },
-          { piece: "bK", pieceHeight: 1.6 },
+        const pieces: { piece: string; pieceHeight: number }[] = [
+            { piece: 'wP', pieceHeight: 1 },
+            { piece: 'wN', pieceHeight: 1.2 },
+            { piece: 'wB', pieceHeight: 1.2 },
+            { piece: 'wR', pieceHeight: 1.2 },
+            { piece: 'wQ', pieceHeight: 1.5 },
+            { piece: 'wK', pieceHeight: 1.6 },
+            { piece: 'bP', pieceHeight: 1 },
+            { piece: 'bN', pieceHeight: 1.2 },
+            { piece: 'bB', pieceHeight: 1.2 },
+            { piece: 'bR', pieceHeight: 1.2 },
+            { piece: 'bQ', pieceHeight: 1.5 },
+            { piece: 'bK', pieceHeight: 1.6 },
         ];
-    
+
         interface test {
             squareWidth: number;
             square: any;
         }
         const pieceComponents = {} as Record<string, any>;
-    
+
         pieces.forEach(({ piece, pieceHeight }) => {
             // @ts-ignore
-          pieceComponents[piece] = ({ squareWidth, square }) => (
-            <div
-              style={{
-                width: squareWidth,
-                height: squareWidth,
-                position: "relative",
-                pointerEvents: "none",
-              }}
-            >
-              <img
-                src={`src/assets/figures/${piece}.png`}
-                width={"40%"}
-                height={"80%"}
-                style={{
-                  position: "absolute",
-                  bottom: `${0.2 * squareWidth}px`,
-                  left: `${0.3 * squareWidth}px`
-                //  objectFit: piece[1] === "K" ? "contain" : "cover",
-                }}
-              />
-            </div>
-          );
+            pieceComponents[piece] = ({ squareWidth, square }) => (
+                <div
+                    style={{
+                        width: squareWidth,
+                        height: squareWidth,
+                        position: 'relative',
+                        pointerEvents: 'none',
+                    }}
+                >
+                    <img
+                        src={`src/assets/figures/${piece}.png`}
+                        width={'40%'}
+                        height={'80%'}
+                        style={{
+                            position: 'absolute',
+                            bottom: `${0.2 * squareWidth}px`,
+                            left: `${0.3 * squareWidth}px`,
+                            //  objectFit: piece[1] === "K" ? "contain" : "cover",
+                        }}
+                    />
+                </div>
+            );
         });
         return pieceComponents;
-      }, []);
+    }, []);
 
     // Ход компьютера
     function findBestMove() {
@@ -210,6 +210,9 @@ const SingleGame = () => {
         <div className={cls.page}>
             <div className={cls.container}>
                 <div className={cls.header}>
+                    <a href="/" className={cls.linkToMenu}>
+                        Back to main menu
+                    </a>
                     <div className={cls.level}>
                         {Object.entries(levels).map(([level, depth], index) => (
                             <button
@@ -218,8 +221,8 @@ const SingleGame = () => {
                                 style={{
                                     backgroundColor:
                                         depth === stockfishLevel
-                                            ? '#626262'
-                                            : '#f0d9b5',
+                                            ? '#b9b9b9'
+                                            : '#fff',
                                 }}
                                 onClick={() => setStockfishLevel(depth)}
                             >
@@ -227,7 +230,9 @@ const SingleGame = () => {
                             </button>
                         ))}
                     </div>
-                    <h1>Ход: {motion ? 'Белых' : 'Черных'}</h1>
+                    <h1>
+                        Ход: {game.history().length % 2 ? 'Черных' : 'Белых'}
+                    </h1>
                 </div>
                 <Chessboard
                     id="ClickToMove"
@@ -240,8 +245,19 @@ const SingleGame = () => {
                         boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
                     }}
                     customPieces={threeDPieces}
-                    customDarkSquareStyle={{ backgroundColor: '#6f73d2' }}
-                    customLightSquareStyle={{ backgroundColor: '#9dacff' }}
+                    // customDarkSquareStyle={{ backgroundColor: '#6f73d2' }}
+                    // customLightSquareStyle={{ backgroundColor: '#9dacff' }}
+                    customLightSquareStyle={{
+                        backgroundColor: '#e0c094',
+                        backgroundImage: 'url("WhiteBlock.webp")',
+                        backgroundSize: 'cover',
+                    }}
+                    customDarkSquareStyle={{
+                        backgroundColor: "#fff",
+                        backgroundImage: 'url("BlackBlock.png")',
+                        backgroundSize: "cover"
+
+                    }}
                     customSquareStyles={{
                         ...moveSquares,
                         ...optionSquares,

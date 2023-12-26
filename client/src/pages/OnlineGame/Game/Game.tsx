@@ -35,6 +35,56 @@ export const Game = ({
 
     const [isModalOpen, toggleModal] = useCycle(true, false);
 
+    const threeDPieces = useMemo(() => {
+        const pieces: { piece: string; pieceHeight: number }[] = [
+            { piece: 'wP', pieceHeight: 1 },
+            { piece: 'wN', pieceHeight: 1.2 },
+            { piece: 'wB', pieceHeight: 1.2 },
+            { piece: 'wR', pieceHeight: 1.2 },
+            { piece: 'wQ', pieceHeight: 1.5 },
+            { piece: 'wK', pieceHeight: 1.6 },
+            { piece: 'bP', pieceHeight: 1 },
+            { piece: 'bN', pieceHeight: 1.2 },
+            { piece: 'bB', pieceHeight: 1.2 },
+            { piece: 'bR', pieceHeight: 1.2 },
+            { piece: 'bQ', pieceHeight: 1.5 },
+            { piece: 'bK', pieceHeight: 1.6 },
+        ];
+
+        interface test {
+            squareWidth: number;
+            square: any;
+        }
+        const pieceComponents = {} as Record<string, any>;
+
+        pieces.forEach(({ piece, pieceHeight }) => {
+            // @ts-ignore
+            pieceComponents[piece] = ({ squareWidth, square }) => (
+                <div
+                    style={{
+                        width: squareWidth,
+                        height: squareWidth,
+                        position: 'relative',
+                        pointerEvents: 'none',
+                    }}
+                >
+                    <img
+                        src={`src/assets/figures/${piece}.png`}
+                        width={'40%'}
+                        height={'80%'}
+                        style={{
+                            position: 'absolute',
+                            bottom: `${0.2 * squareWidth}px`,
+                            left: `${0.3 * squareWidth}px`,
+                            //  objectFit: piece[1] === "K" ? "contain" : "cover",
+                        }}
+                    />
+                </div>
+            );
+        });
+        return pieceComponents;
+    }, []);
+
     const makeAMove = useCallback(
         (move: any) => {
             try {
@@ -195,8 +245,18 @@ export const Game = ({
                         position={chess.fen()}
                         onSquareClick={onSquareClick}
                         promotionToSquare={moveTo}
-                        customDarkSquareStyle={{ backgroundColor: '#6f73d2' }}
-                        customLightSquareStyle={{ backgroundColor: '#9dacff' }}
+                        customPieces={threeDPieces}
+                        customLightSquareStyle={{
+                            backgroundColor: '#e0c094',
+                            backgroundImage: 'url("WhiteBlock.webp")',
+                            backgroundSize: 'cover',
+                        }}
+                        customDarkSquareStyle={{
+                            backgroundColor: "rgba(255,255,255,0.43)",
+                            backgroundImage: 'url("BlackBlock.png")',
+                            backgroundSize: "cover"
+
+                        }}
                         customBoardStyle={{
                             border: '2px solid black',
                             borderRadius: '4px',
