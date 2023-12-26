@@ -17,11 +17,14 @@
     0 -3px 0 0 black,
     0 3px 0 0 black;
 
+    transition: color .3s ease;
+
     &:hover {
         background-color: #606060;;
 
         border-right: 6px solid black;
         border-bottom: 8px solid black;
+        color: white;
     }
 
     &:active {

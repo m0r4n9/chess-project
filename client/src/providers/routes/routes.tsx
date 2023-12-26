@@ -1,8 +1,9 @@
 import { ReactNode } from 'react';
 import { StartMenu } from '@/pages/StartMenu';
 import { OnlineGame } from '@/pages/OnlineGame';
-import OfflineGame from '@/pages/OfflineGame/OfflineGame.tsx';
 import { ProfilePage } from '@/pages/ProfilePage';
+import { SingleGameAsync } from '@/pages/SinglePage/SingleGame.async.tsx';
+import { OfflineGame } from '@/pages/OfflineGame';
 
 interface RoutesProps {
     path: string;
@@ -15,15 +16,23 @@ export const listRoutes: RoutesProps[] = [
         element: <StartMenu />,
     },
     {
+        path: '/offline',
+        element: <OfflineGame/>
+    },
+    {
         path: '/single',
-        element: <OfflineGame />,
+        element: <SingleGameAsync />,
     },
     {
         path: '/online',
         element: <OnlineGame />,
     },
     {
-        path: "/profile/:id",
-        element: <ProfilePage/>
+        path: '/profile/:id',
+        element: <ProfilePage />,
+    },
+    {
+        path: '*',
+        element: <StartMenu/>
     }
 ];

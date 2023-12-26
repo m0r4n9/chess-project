@@ -5,7 +5,8 @@ import { Sidebar } from '@/components/Sidebar/Sidebar.tsx';
 import { useCycle } from 'framer-motion';
 import { AuthSidebar } from '@/features/Auth';
 import { useSelector } from 'react-redux';
-import { getUserData } from '@/entities/User';
+import { getUserData, userActions } from '@/entities/User';
+import { useAppDispatch } from '@/hooks/useAppDispatch/useAppDispatch';
 
 interface BurgerMenuProps {
     trigger?: ReactNode;
@@ -21,27 +22,13 @@ interface listProps {
 export const BurgerMenu = memo((props: BurgerMenuProps) => {
     const { trigger } = props;
     const user = useSelector(getUserData);
+    const dispatch = useAppDispatch();
     const [isSidebarOpen, toggleSidebar] = useCycle(false, true);
     const [isAuthSidebar, toggleAuthSidebar] = useCycle(false, true);
 
-    const listItems: listProps[] = useMemo(
-        () => [
-            {
-                content: user ? 'profile' : 'sign in',
-                trigger: toggleAuthSidebar,
-                node: (
-                    <AuthSidebar
-                        isAuthSidebar={isAuthSidebar}
-                        setIsAuthSidebar={toggleAuthSidebar}
-                    />
-                ),
-            },
-            {
-                content: 'Settings',
-            },
-        ],
-        [user, isAuthSidebar, toggleAuthSidebar],
-    );
+    const onLogout = () => {
+        dispatch(userActions.logout());
+    };
 
     return (
         <div className={cls.BurgerMenu}>
@@ -80,6 +67,17 @@ export const BurgerMenu = memo((props: BurgerMenuProps) => {
                             <li className={cls.toolsListItem}>
                                 <Button className={cls.btn}>settings</Button>
                             </li>
+
+                            {user?.id && (
+                                <li className={cls.toolsListItem}>
+                                    <Button
+                                        className={cls.btn}
+                                        onClick={onLogout}
+                                    >
+                                        exit
+                                    </Button>
+                                </li>
+                            )}
                         </ul>
                     </div>
                 </div>

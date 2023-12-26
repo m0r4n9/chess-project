@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useMenuAnimation } from '../useMenuAnimation.ts';
 import { BurgerMenu } from './BurgerMenu/BurgerMenu.tsx';
 import { ReactComponent as BurgerIcon } from '@/assets/icons/burger.svg';
+import { useSelector } from 'react-redux';
+import { getUserData } from '@/entities/User/index.ts';
 
 interface linksProps {
     href: string;
@@ -12,6 +14,7 @@ interface linksProps {
 
 export const StartMenu = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const user = useSelector(getUserData);
     const scope = useMenuAnimation({ isOpen });
 
     useEffect(() => {
@@ -28,7 +31,6 @@ export const StartMenu = () => {
 
         return () => clearTimeout(timeId);
     }, []);
-
 
     // TODO: fix animation _inited
     return (
@@ -77,18 +79,32 @@ export const StartMenu = () => {
                         }}
                     >
                         <li>
-                            <a
-                                href="/single"
-                                className={cls.pixel}
-                                style={{ color: 'white' }}
-                            >
-                                Play Offline
+                            <a href="/offline" className={cls.pixel}>
+                                Play with friend!
                             </a>
                         </li>
                         <li>
-                            <a href="/online" className={cls.pixel}>
+                            <a href="/single" className={cls.pixel}>
+                                Play with computer
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                onClick={(e) => {
+                                    !user?.id && e.preventDefault()
+                                }}
+                                href="/online"
+                                className={`${cls.pixel} ${
+                                    !user?.id ? cls.disabled : ''
+                                } `}
+                            >
                                 Play Online
                             </a>
+                            {!user?.id && (
+                                <div className={cls.requireAuthInfo}>
+                                    Чтобы играть онлайн, войдите в аккаунт
+                                </div>
+                            )}
                         </li>
                         <li>
                             <a href="#" className={cls.pixel}>

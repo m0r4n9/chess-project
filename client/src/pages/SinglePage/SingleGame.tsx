@@ -1,15 +1,15 @@
-import { useMemo, useState } from 'react';
-import cls from './OfflineGame.module.scss';
+import { ReactNode, useMemo, useState } from 'react';
+import cls from './SinglePage.module.scss';
 import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
 import Engine from './Engine/Engine.ts';
 import { Square } from 'react-chessboard/dist/chessboard/types';
 import { Move } from '../../interfaces/ChessTypes/chess.ts';
 
-const OfflineGame = () => {
+const SingleGame = () => {
     const levels = {
-        'Легкий': 2,
-        'Средний': 8,
+        Легкий: 2,
+        Средний: 8,
     };
     const engine = useMemo(() => new Engine(), []);
     const [game, setGame] = useState(new Chess());
@@ -39,6 +39,56 @@ const OfflineGame = () => {
     // useEffect(() => {
     //     console.log(game.history());
     // }, [game.history()]);
+
+    const threeDPieces = useMemo(() => {
+        const pieces: {piece: string, pieceHeight: number}[] = [
+          { piece: "wP", pieceHeight: 1 },
+          { piece: "wN", pieceHeight: 1.2 },
+          { piece: "wB", pieceHeight: 1.2 },
+          { piece: "wR", pieceHeight: 1.2 },
+          { piece: "wQ", pieceHeight: 1.5 },
+          { piece: "wK", pieceHeight: 1.6 },
+          { piece: "bP", pieceHeight: 1 },
+          { piece: "bN", pieceHeight: 1.2 },
+          { piece: "bB", pieceHeight: 1.2 },
+          { piece: "bR", pieceHeight: 1.2 },
+          { piece: "bQ", pieceHeight: 1.5 },
+          { piece: "bK", pieceHeight: 1.6 },
+        ];
+    
+        interface test {
+            squareWidth: number;
+            square: any;
+        }
+        const pieceComponents = {} as Record<string, any>;
+    
+        pieces.forEach(({ piece, pieceHeight }) => {
+            // @ts-ignore
+          pieceComponents[piece] = ({ squareWidth, square }) => (
+            <div
+              style={{
+                width: squareWidth,
+                height: squareWidth,
+                position: "relative",
+                pointerEvents: "none",
+              }}
+            >
+              <img
+                src={`src/assets/figures/${piece}.png`}
+                width={"40%"}
+                height={"80%"}
+                style={{
+                  position: "absolute",
+                  bottom: `${0.2 * squareWidth}px`,
+                  left: `${0.3 * squareWidth}px`
+                //  objectFit: piece[1] === "K" ? "contain" : "cover",
+                }}
+              />
+            </div>
+          );
+        });
+        return pieceComponents;
+      }, []);
 
     // Ход компьютера
     function findBestMove() {
@@ -160,7 +210,6 @@ const OfflineGame = () => {
         <div className={cls.page}>
             <div className={cls.container}>
                 <div className={cls.header}>
-
                     <div className={cls.level}>
                         {Object.entries(levels).map(([level, depth], index) => (
                             <button
@@ -190,6 +239,7 @@ const OfflineGame = () => {
                         borderRadius: '4px',
                         boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
                     }}
+                    customPieces={threeDPieces}
                     customDarkSquareStyle={{ backgroundColor: '#6f73d2' }}
                     customLightSquareStyle={{ backgroundColor: '#9dacff' }}
                     customSquareStyles={{
@@ -234,4 +284,4 @@ const OfflineGame = () => {
     );
 };
 
-export default OfflineGame;
+export default SingleGame;
